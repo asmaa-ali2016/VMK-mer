@@ -58,3 +58,16 @@ for record in vcf:
         sep="\t"
     )
 ```
+
+```python
+consensus = FastaVariant('yourgenome.fasta', 'variants.vcf.gz', het=True, hom=True)
+
+out = open("variants.fasta", "w")
+
+for chrom in consensus.keys:
+    for var in consensus[chrom].variants_sites:
+        record = consensus[chrom][var-1:var]
+        print(record, file=out)
+
+out.close()
+```
