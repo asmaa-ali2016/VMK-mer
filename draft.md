@@ -1,9 +1,10 @@
 # Draft
 https://pysam.readthedocs.io/en/latest/index.html
 
-## PyVCF && VCF Parser
+## PyVCF && VCF Parser && pyfaidx
 - https://github.com/jamescasbon/PyVCF
 - https://github.com/moonso/vcf_parser
+- https://github.com/mdshw5/pyfaidx``python
 
 ```python
 from vcf_parser import VCFParser
