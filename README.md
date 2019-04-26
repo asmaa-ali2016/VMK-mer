@@ -5,5 +5,6 @@ VMK-mer: Standalone tool that converts mutations in VCF file into k-mer sequence
 - Ahmed Omar
 - Asmaa Ali
 - Mohamed Magdy
+- Mohamed Refaat
 - Ruwaa Mohamed **(Team Leader)**
 - Usama Bakry
