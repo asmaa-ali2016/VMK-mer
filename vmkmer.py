@@ -15,6 +15,7 @@ print('Check https://github.com/ubakry/VMK-mer for updates.')
 print('===============================================================================')
 # Importing libraries
 import argparse
+import pysam
 
 args = None
 
@@ -43,9 +44,6 @@ if __name__ == '__main__':
     args = get_args()
 	main()
 
-
-# main file
-import pysam
 
 def snp():
 	pass
