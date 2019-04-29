@@ -54,9 +54,26 @@ def get_kmers(seq, k):
 def snp():
 	pass
 	
-def insertion():
-	pass
+def insertion(record, genome, k, df):
+    index = 0  
 	
+    for record in vcf.fetch():
+		
+        ref_kmers = []
+        mutant_kmers = []
+        seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
+        mut_seq = seq[:flank+1]+record.alts[0][1:]+seq[flank+1:]
+		
+        for i in range(1,k+1):
+            ref_kmers.append(seq[flank-k+i:flank+i])
+                
+        for i in range(k+len(record.alts[0][1:])):
+            mutant_kmers.append(mut_seq[i: i+k])
+                    
+        df.loc[index] = [record.chrom, record.pos, record.id, record.ref, record.alts[0], ref_kmers, mutant_kmers]
+        index += 1
+		
+    return (df)
 
 def deletion(record, genome, k, df):
     for alt in record.alts:
