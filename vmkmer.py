@@ -16,6 +16,7 @@ print('=========================================================================
 # Importing libraries
 import argparse
 import pysam
+import pandas as pd
 
 args = None
 
@@ -44,6 +45,11 @@ if __name__ == '__main__':
     args = get_args()
 	main()
 
+def get_kmers(seq, k):
+    kmers_lst = []
+    for i in range(len(seq)-k+1):
+        kmers_lst.append(seq[i:i+k].lower())
+    return kmers_lst
 
 def snp():
 	pass
@@ -51,8 +57,18 @@ def snp():
 def insertion():
 	pass
 	
-def deletion():
-	pass
+
+def deletion(record, genome, k, df):
+    for alt in record.alts:
+        start = record.start - k + 1
+        stop = record.stop + k - len(alt)
+        original_seq = genome.fetch('chr'+str(record.chrom), start, stop)
+        mutated_seq = original_seq[:k-1]+alt+original_seq[k+len(record.ref)-1:]
+        ref_kmers = get_kmers(original_seq, k)
+        mut_kmers = get_kmers(mutated_seq, k)
+        df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
+        return df
+
 	
 def main():
 	# open vcf file
@@ -61,18 +77,16 @@ def main():
 	genome = pysam.FastaFile(args['f'])
 	# Length of kmer
 	kmer_len = args['l']
-	ref_kmers = []
-	mut_kmers = []
+	df = pd.DataFrame(columns=['chr', 'pos', 'mutation_id', 'ref_allele', 'mut_allele', 'ref_kmers', 'mut_kmers'])
 	for record in vcf:
 		mutation_type = str(record).split('TSA=')[1].split(';')[0]
 		if mutation_type == "SNV":
-			output = SNV(record, k)
+			df = SNV(record, genome, k, df)
 		elif mutation_type == "insertion":
-			output = insertion(record, k)
+			df = insertion(record, genome, k, df)
 		elif mutation_type == "deletion":
-			output = deletion(record, k)
-		ref_kmers.append(output[-2])
-		mut_kmers.append(output[-1])		
+			df = deletion(record, genome, k, df)
+#		df = df.append({'chr': record.chr, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
 		
 #SNP
 # of kmers = length of kmer
