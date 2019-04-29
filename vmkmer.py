@@ -41,3 +41,48 @@ def get_args():
 
 if __name__ == '__main__':
     args = get_args()
+
+
+# main file
+import pysam
+
+def snp():
+	pass
+	
+def insertion():
+	pass
+	
+def deletion():
+	pass
+	
+def main(vcf_file_name, genome_fastafile_name):
+	# open vcf file
+	vcf = pysam.VariantFile("canis_familiaris.vcf")
+	# open fasta file
+	genome = pysam.FastaFile("dog_chr5.fa")
+	ref_kmers = []
+	mut_kmers = []
+	for record in vcf:
+		mutation_type = str(record).split('TSA=')[1].split(';')[0]
+		if mutation_type == "SNV":
+			output = SNV(record, k)
+		elif mutation_type == "insertion":
+			output = insertion(record, k)
+		elif mutation_type == "deletion":
+			output = deletion(record, k)
+		ref_kmers.append(output[-2])
+		mut_kmers.append(output[-1])		
+		
+#SNP
+# of kmers = length of kmer
+
+#Insertion 
+# of kmers before = length of kmer
+# of kmers after = length of kmer + length of insertion 
+
+#deletion
+# of kmers before = length of kmer
+# of kmers after = length of kmer - length of insertion 
+
+# required output >> Chr, pos, mut_id, ref_allele, mut_allele ref_kmers, mut_kmers
+# Note multiple mutations at the same record (comma separated).
