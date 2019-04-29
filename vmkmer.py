@@ -55,23 +55,19 @@ def snp():
 	pass
 	
 def insertion(record, genome, k, df):
-    index = 0  
 	
-    for record in vcf.fetch():
-		
-        ref_kmers = []
-        mutant_kmers = []
-        seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
-        mut_seq = seq[:flank+1]+record.alts[0][1:]+seq[flank+1:]
-		
-        for i in range(1,k+1):
-            ref_kmers.append(seq[flank-k+i:flank+i])
+    ref_kmers = []
+    mutant_kmers = []
+    seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
+    mut_seq = seq[:flank+1]+record.alts[0][1:]+seq[flank+1:]
+	
+    for i in range(1,k+1):
+        ref_kmers.append(seq[flank-k+i:flank+i])
                 
-        for i in range(k+len(record.alts[0][1:])):
-            mutant_kmers.append(mut_seq[i: i+k])
-                    
-        df.loc[index] = [record.chrom, record.pos, record.id, record.ref, record.alts[0], ref_kmers, mutant_kmers]
-        index += 1
+    for i in range(k+len(record.alts[0][1:])):
+        mutant_kmers.append(mut_seq[i: i+k])
+                  
+    df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts[0], 'ref_kmers': ref_kmers, 'mut_kmers': mutant_kmers}, ignore_index=True)
 		
     return (df)
 
