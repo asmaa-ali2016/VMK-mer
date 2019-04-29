@@ -59,10 +59,10 @@ def insertion(record, genome, k, df):
     ref_kmers = []
     mutant_kmers = []
     seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
-    mut_seq = seq[:flank+1]+record.alts[0][1:]+seq[flank+1:]
+    mut_seq = seq[:k]+record.alts[0][1:]+seq[k:]
 	
-    for i in range(1,k+1):
-        ref_kmers.append(seq[flank-k+i:flank+i])
+    for i in range(1,k+1):k-1
+        ref_kmers.append(seq[i-1:k+i-1])
                 
     for i in range(k+len(record.alts[0][1:])):
         mutant_kmers.append(mut_seq[i: i+k])
