@@ -41,6 +41,7 @@ def get_args():
 
 if __name__ == '__main__':
     args = get_args()
+	main()
 
 
 # main file
@@ -55,11 +56,13 @@ def insertion():
 def deletion():
 	pass
 	
-def main(vcf_file_name, genome_fastafile_name):
+def main():
 	# open vcf file
-	vcf = pysam.VariantFile("canis_familiaris.vcf")
+	vcf = pysam.VariantFile(args['v'])
 	# open fasta file
-	genome = pysam.FastaFile("dog_chr5.fa")
+	genome = pysam.FastaFile(args['f'])
+	# Length of kmer
+	kmer_len = args['l']
 	ref_kmers = []
 	mut_kmers = []
 	for record in vcf:
