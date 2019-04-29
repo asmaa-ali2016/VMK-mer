@@ -66,7 +66,7 @@ def deletion(record, genome, k, df):
         mutated_seq = original_seq[:k-1]+alt+original_seq[k+len(record.ref)-1:]
         ref_kmers = get_kmers(original_seq, k)
         mut_kmers = get_kmers(mutated_seq, k)
-        df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
+        df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': alt, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
         return df
 
 	
