@@ -113,6 +113,7 @@ if __name__ == '__main__':
     args = get_args()
 	main()
 	
+	
 #		df = df.append({'chr': record.chr, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
 		
 #SNP
