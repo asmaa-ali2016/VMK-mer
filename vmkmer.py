@@ -53,17 +53,17 @@ def snp(record, genome, k, df):
 	
 	ref_kmers = []
 	mutant_kmers = []
-	seq = genome.fetch(record.chrom, record.pos-flank-1, record.pos+flank+1)
+	seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
 
 	for i in range(1,k+1):
 		
-		ref_kmers.append(seq[flank-k+i:flank+i])
+		ref_kmers.append(seq[i-1:k+i-1])
 		if i == 1:
-			mutant_kmers.append(seq[flank-k+i:flank+i-1]+record.alts[0])
+			mutant_kmers.append(seq[i-1:k+i-2]+record.alts[0])
 		elif i == k:
-			mutant_kmers.append(record.alts[0]+seq[flank+1:flank+k])
+			mutant_kmers.append(record.alts[0]+seq[k:2*k-1])
 		else:
-			mutant_kmers.append(seq[flank-k+i:flank]+record.alts[0]+seq[flank+1:flank+i])
+			mutant_kmers.append(seq[i-1:k-1]+record.alts[0]+seq[k:k+i-1])
     
 	df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts[0], 'ref_kmers': ref_kmers, 'mut_kmers': mutant_kmers}, ignore_index=True)
 	return (df)
