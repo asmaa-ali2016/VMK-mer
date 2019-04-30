@@ -13,6 +13,7 @@ print('=========================================================================
 print('VMK-mer v1.0 | by A. Omar, A. Ali, M. Magdy, M. Refaat, R. Mohamed and U. Bakry')
 print('Check https://github.com/ubakry/VMK-mer for updates.')
 print('===============================================================================')
+
 # Importing libraries
 import argparse
 import pysam
@@ -41,18 +42,16 @@ def get_args():
     return arguments
 # ----------------------------------------------------------------------
 
-if __name__ == '__main__':
-    args = get_args()
-	main()
-
 def get_kmers(seq, k):
     kmers_lst = []
     for i in range(len(seq)-k+1):
         kmers_lst.append(seq[i:i+k].lower())
     return kmers_lst
 
+
 def snp():
 	pass
+	
 	
 def insertion(record, genome, k, df):
 	
@@ -68,37 +67,53 @@ def insertion(record, genome, k, df):
         mutant_kmers.append(mut_seq[i: i+k])
                   
     df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts[0], 'ref_kmers': ref_kmers, 'mut_kmers': mutant_kmers}, ignore_index=True)
-		
     return (df)
 
+
 def deletion(record, genome, k, df):
+	
     for alt in record.alts:
+		
         start = record.start - k + 1
         stop = record.stop + k - len(alt)
-        original_seq = genome.fetch('chr'+str(record.chrom), start, stop)
+		
+        original_seq = genome.fetch(record.chrom, start, stop)
         mutated_seq = original_seq[:k-1]+alt+original_seq[k+len(record.ref)-1:]
+		
         ref_kmers = get_kmers(original_seq, k)
         mut_kmers = get_kmers(mutated_seq, k)
+		
         df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': alt, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
         return df
 
 	
 def main():
-	# open vcf file
-	vcf = pysam.VariantFile(args['v'])
-	# open fasta file
-	genome = pysam.FastaFile(args['f'])
-	# Length of kmer
-	kmer_len = args['l']
-	df = pd.DataFrame(columns=['chr', 'pos', 'mutation_id', 'ref_allele', 'mut_allele', 'ref_kmers', 'mut_kmers'])
+	
+	vcf = pysam.VariantFile(args['v'])  # open vcf file
+	genome = pysam.FastaFile(args['f'])  # open fasta file
+	kmer_len = args['l']  # Length of kmer
+    df = pd.DataFrame(columns=['chr', 'pos', 'mutation_id', 'ref_allele', 'mut_allele', 'ref_kmers', 'mut_kmers'])
+    
 	for record in vcf:
-		mutation_type = str(record).split('TSA=')[1].split(';')[0]
-		if mutation_type == "SNV":
-			df = SNV(record, genome, k, df)
-		elif mutation_type == "insertion":
-			df = insertion(record, genome, k, df)
-		elif mutation_type == "deletion":
-			df = deletion(record, genome, k, df)
+		
+        mutation_type = str(record.info['VT'][0])
+        if mutation_type == "SNP":
+            #df = snp(record, genome, k, df)
+            pass
+		
+        elif mutation_type == "INDEL":
+            if len(record.alts[0]) > len(record.ref):
+                df = insertion(record, genome, k, df)
+            elif len(record.alts[0]) < len(record.ref):
+                df = deletion(record, genome, k, df)
+				
+    df.to_csv('kmers.csv')
+    return(df)
+
+if __name__ == '__main__':
+    args = get_args()
+	main()
+	
 #		df = df.append({'chr': record.chr, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
 		
 #SNP
