@@ -92,7 +92,7 @@ def main():
 	vcf = pysam.VariantFile(args['v'])  # open vcf file
 	genome = pysam.FastaFile(args['f'])  # open fasta file
 	kmer_len = args['l']  # Length of kmer
-    df = pd.DataFrame(columns=['chr', 'pos', 'mutation_id', 'ref_allele', 'mut_allele', 'ref_kmers', 'mut_kmers'])
+    df = pd.DataFrame(columns=['Chr', 'Pos', 'Mutant-ID', 'Ref-Allele', 'Mut-Allele', 'Ref-Kmers', 'Mut-Kmers'])
     
 	for record in vcf:
 		
