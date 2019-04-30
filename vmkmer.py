@@ -50,7 +50,23 @@ def get_kmers(seq, k):
 
 
 def snp():
-	pass
+	
+	ref_kmers = []
+	mutant_kmers = []
+	seq = genome.fetch(record.chrom, record.pos-flank-1, record.pos+flank+1)
+
+	for i in range(1,k+1):
+		
+		ref_kmers.append(seq[flank-k+i:flank+i])
+		if i == 1:
+			mutant_kmers.append(seq[flank-k+i:flank+i-1]+record.alts[0])
+		elif i == k:
+			mutant_kmers.append(record.alts[0]+seq[flank+1:flank+k])
+		else:
+			mutant_kmers.append(seq[flank-k+i:flank]+record.alts[0]+seq[flank+1:flank+i])
+    
+	df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts[0], 'ref_kmers': ref_kmers, 'mut_kmers': mutant_kmers}, ignore_index=True)
+	return (df)
 	
 	
 def insertion(record, genome, k, df):
