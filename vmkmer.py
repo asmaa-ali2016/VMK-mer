@@ -111,23 +111,24 @@ def main():
     df = pd.DataFrame(columns=['chr', 'pos', 'mutation_id', 'ref_allele', 'mut_allele', 'ref_kmers', 'mut_kmers'])
     
     for record in vcf:
+        
         mutation_type = str(record.info['VT'][0])
         if mutation_type == "SNP":
-            #df = snp(record, genome, k, df)
-            pass
-		
+            df = snp(record, genome, k, df)	
+            
         elif mutation_type == "INDEL":
             if len(record.alts[0]) > len(record.ref):
                 df = insertion(record, genome, k, df)
             elif len(record.alts[0]) < len(record.ref):
                 df = deletion(record, genome, k, df)
+                
     print('All kmers have been extracted successfuly')
     df.to_csv('kmers.csv', sep='\t')
     return(df)
 
 if __name__ == '__main__':
     args = get_args()
-	main()
+    main()
 	
 	
 #		df = df.append({'chr': record.chr, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
