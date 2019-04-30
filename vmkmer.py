@@ -105,7 +105,7 @@ def main():
                 df = insertion(record, genome, k, df)
             elif len(record.alts[0]) < len(record.ref):
                 df = deletion(record, genome, k, df)
-	print('All kmers have been extracted successfuly')
+    print('All kmers have been extracted successfuly')
     df.to_csv('kmers.csv', sep='\t')
     return(df)
 
