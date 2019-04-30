@@ -74,7 +74,7 @@ def deletion(record, genome, k, df):
 	
     for alt in record.alts:
 		
-        start = record.start - k + 1
+        start = record.start - k + 2
         stop = record.stop + k - len(alt)
 		
         original_seq = genome.fetch(record.chrom, start, stop)
@@ -88,14 +88,13 @@ def deletion(record, genome, k, df):
 
 	
 def main():
-	
-	vcf = pysam.VariantFile(args['v'])  # open vcf file
-	genome = pysam.FastaFile(args['f'])  # open fasta file
-	kmer_len = args['l']  # Length of kmer
+
+    vcf = pysam.VariantFile(args['v'])  # open vcf file
+    genome = pysam.FastaFile(args['f'])  # open fasta file
+    kmer_len = args['l']  # Length of kmer
     df = pd.DataFrame(columns=['chr', 'pos', 'mutation_id', 'ref_allele', 'mut_allele', 'ref_kmers', 'mut_kmers'])
     
-	for record in vcf:
-		
+    for record in vcf:
         mutation_type = str(record.info['VT'][0])
         if mutation_type == "SNP":
             #df = snp(record, genome, k, df)
