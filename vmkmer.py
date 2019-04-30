@@ -49,7 +49,7 @@ def get_kmers(seq, k):
     return kmers_lst
 
 
-def snp():
+def snp(record, genome, k, df):
 	
 	ref_kmers = []
 	mutant_kmers = []
