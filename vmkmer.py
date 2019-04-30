@@ -32,7 +32,7 @@ def get_args():
     # required argument
     parser.add_argument('-f', action="store", required=True, help='Input fasta file')
     parser.add_argument('-v', action="store", required=True, help='Input vcf file')
-    parser.add_argument('-l', action="store", required=True, help='Length of k-mer')
+    parser.add_argument('-k', action="store", required=True, type=int, help='Length of k-mer')
 
     # optional arguments
     parser.add_argument('-o', action="store", help='The output directory', default='.')
@@ -91,7 +91,7 @@ def main():
 
     vcf = pysam.VariantFile(args['v'])  # open vcf file
     genome = pysam.FastaFile(args['f'])  # open fasta file
-    kmer_len = args['l']  # Length of kmer
+    k = args['k']  # Length of kmer
     df = pd.DataFrame(columns=['chr', 'pos', 'mutation_id', 'ref_allele', 'mut_allele', 'ref_kmers', 'mut_kmers'])
     
     for record in vcf:
@@ -105,8 +105,8 @@ def main():
                 df = insertion(record, genome, k, df)
             elif len(record.alts[0]) < len(record.ref):
                 df = deletion(record, genome, k, df)
-				
-    df.to_csv('kmers.csv')
+	print('All kmers have been extracted successfuly')
+    df.to_csv('kmers.csv', sep='\t')
     return(df)
 
 if __name__ == '__main__':
