@@ -54,16 +54,14 @@ def snp(record, genome, k, df):
 	ref_kmers = []
 	mutant_kmers = []
 	seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
-
-	for i in range(1,k+1):
+	
+	for alt in record.alts:
 		
-		ref_kmers.append(seq[i-1:k+i-1])
-		if i == 1:
-			mutant_kmers.append(seq[i-1:k+i-2]+record.alts[0])
-		elif i == k:
-			mutant_kmers.append(record.alts[0]+seq[k:2*k-1])
-		else:
-			mutant_kmers.append(seq[i-1:k-1]+record.alts[0]+seq[k:k+i-1])
+		mut_seq = seq[:k]+alt+seq[k+1:]
+		for i in range(1,k+1):
+
+			ref_kmers.append(seq[i-1:k+i-1])
+			mutant_kmers.append(mut_seq[i-1:k+i-1])
     
 	df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts[0], 'ref_kmers': ref_kmers, 'mut_kmers': mutant_kmers}, ignore_index=True)
 	return (df)
@@ -74,13 +72,15 @@ def insertion(record, genome, k, df):
     ref_kmers = []
     mutant_kmers = []
     seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
-    mut_seq = seq[:k]+record.alts[0][1:]+seq[k:]
 	
-    for i in range(1,k+1):
-        ref_kmers.append(seq[i-1:k+i-1])
-                
-    for i in range(k+len(record.alts[0][1:])):
-        mutant_kmers.append(mut_seq[i: i+k])
+	for alt in record.alts:
+		mut_seq = seq[:k]+alt[1:]+seq[k:]
+
+		for i in range(1,k+1):
+			ref_kmers.append(seq[i-1:k+i-1])
+
+		for i in range(k+len(record.alts[0][1:])):
+			mutant_kmers.append(mut_seq[i: i+k])
                   
     df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts[0], 'ref_kmers': ref_kmers, 'mut_kmers': mutant_kmers}, ignore_index=True)
     return (df)
