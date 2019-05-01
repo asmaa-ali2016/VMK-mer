@@ -158,7 +158,11 @@ def xml-write(df, out_file):
         for val in df[it]:
             item.text= (val)
     # print xml syntax ..
-    # et.dump(item)
+    #et.dump(item)
+	# wrap it in an ElementTree instance, and save as XML
+    tree = et.ElementTree(kmer)
+    tree.write(out_file)
+	
 
 
 if __name__ == '__main__':
