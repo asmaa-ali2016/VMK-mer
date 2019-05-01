@@ -18,9 +18,10 @@ print('=========================================================================
 import argparse
 import pysam
 import pandas as pd
+import xml.etree.ElementTree as et
 
 args = None
-	
+
 # ----------------------------------------------------------------------
 def get_args():
 	""""""
@@ -50,13 +51,13 @@ def get_kmers(seq, k):
 
 
 def snp(record, genome, k, df):
-	
+
 	ref_kmers = []
 	mut_kmers = []
 	seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
 
 	for i in range(1,k+1):
-		
+
 		ref_kmers.append(seq[i-1:k+i-1])
 		if i == 1:
 			mut_kmers.append(seq[i-1:k+i-2]+record.alts[0])
@@ -64,45 +65,45 @@ def snp(record, genome, k, df):
 			mut_kmers.append(record.alts[0]+seq[k:2*k-1])
 		else:
 			mut_kmers.append(seq[i-1:k-1]+record.alts[0]+seq[k:k+i-1])
-	
+
 	df = df.append({'Chr': record.chrom, 'Pos': record.pos, 'Mutation-ID': record.id, 'Ref-Allele': record.ref, 'Mut-Allele': record.alts[0], 'Ref-Kmers': ref_kmers, 'Mut-Kmers': mut_kmers}, ignore_index=True)
 	return (df)
-	
-	
+
+
 def insertion(record, genome, k, df):
-	
+
 	ref_kmers = []
 	mut_kmers = []
 	seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
 	mut_seq = seq[:k]+record.alts[0][1:]+seq[k:]
-	
+
 	for i in range(1,k+1):
 		ref_kmers.append(seq[i-1:k+i-1])
-				
+
 	for i in range(k+len(record.alts[0][1:])):
 		mut_kmers.append(mut_seq[i: i+k])
-				  
+
 	df = df.append({'Chr': record.chrom, 'Pos': record.pos, 'Mutation-ID': record.id, 'Ref-Allele': record.ref, 'Mut-Allele': record.alts[0], 'Ref-Kmers': ref_kmers, 'Mut-Kmers': mut_kmers}, ignore_index=True)
 	return (df)
 
 
 def deletion(record, genome, k, df):
-	
+
 	for alt in record.alts:
-		
+
 		start = record.start - k + 2
 		stop = record.stop + k - len(alt)
-		
+
 		original_seq = genome.fetch(record.chrom, start, stop)
 		mutated_seq = original_seq[:k-1]+alt+original_seq[k+len(record.ref)-1:]
-		
+
 		ref_kmers = get_kmers(original_seq, k)
 		mut_kmers = get_kmers(mutated_seq, k)
-		
+
 		df = df.append({'Chr': record.chrom, 'Pos': record.pos, 'Mutation-ID': record.id, 'Ref-Allele': record.ref, 'Mut-Allele': alt, 'Ref-Kmers': ref_kmers, 'Mut-Kmers': mut_kmers}, ignore_index=True)
 		return (df)
 
-	
+
 def main():
 
 	genome = pysam.FastaFile(args['f'])  # open fasta file
@@ -110,12 +111,12 @@ def main():
 	vcf = pysam.VariantFile(args['v'])  # open vcf file
 	print('[	  OK       ] Reading vcf file is done.')
 	k = args['k']  # Length of kmer
-	
+
 	df = pd.DataFrame(columns=['Chr', 'Pos', 'Mutation-ID', 'Ref-Allele', 'Mut-Allele', 'Ref-Kmers', 'Mut-Kmers'])
 	print('[	PROCESS    ] Extracting mutant kmers...')
 	for record in vcf:
 		if 'TSA' in record.info.keys():
-			
+
 			mutation_type = str(record.info['TSA'])
 			if mutation_type == "SNV":
 				df = snp(record, genome, k, df)
@@ -123,9 +124,9 @@ def main():
 				df = insertion(record, genome, k, df)
 			elif mutation_type == "deletion":
 				df = deletion(record, genome, k, df)
-		
+
 		elif 'VT' in record.info.keys():
-			
+
 			mutation_type = str(record.info['VT'][0])
 			if mutation_type == "SNP":
 				#df = snp(record, genome, k, df)
@@ -135,28 +136,48 @@ def main():
 					df = insertion(record, genome, k, df)
 				elif len(record.alts[0]) < len(record.ref):
 					df = deletion(record, genome, k, df)
-		
+
 	print('[	  OK       ] All kmers have been extracted successfully.')
 	df.to_csv(args['o']+'/kmers.csv', sep='\t')
 	return(df)
 
+#------------------------------------------------------------------------------
+# Function to make xml file from df
+def xml-write(df, out_file):
+    '''
+	the xml-write function takes data frame from pandas to convert it's an
+	elements to XML format and finally produce out_file.xml
+    '''
+    # creating root for xml file
+    kmer= et.Element("vmk-mer")
+    # extract columns headers from df
+    columns= list(df.columns.values)
+    # creating subelement fro xml file by looping into each item in each column
+    for it in columns:
+    item = et.SubElement(kmer, it)
+        for val in df[it]:
+            item.text= (val)
+    # print xml syntax ..
+    # et.dump(item)
+
+
 if __name__ == '__main__':
 	args = get_args()
 	main()
-	
-	
+
+
 #		df = df.append({'chr': record.chr, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
-		
+
 #SNP
 # of kmers = length of kmer
 
-#Insertion 
+#Insertion
 # of kmers before = length of kmer
-# of kmers after = length of kmer + length of insertion 
+# of kmers after = length of kmer + length of insertion
 
 #deletion
 # of kmers before = length of kmer
-# of kmers after = length of kmer - length of insertion 
+# of kmers after = length of kmer - length of insertion
 
 # required output >> Chr, pos, mut_id, ref_allele, mut_allele ref_kmers, mut_kmers
 # Note multiple mutations at the same record (comma separated).
