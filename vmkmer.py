@@ -71,19 +71,21 @@ def snp(record, genome, k, df):
 
 
 def insertion(record, genome, k, df):
-
+	
 	ref_kmers = []
-	mut_kmers = []
+	mutant_kmers = []
 	seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
-	mut_seq = seq[:k]+record.alts[0][1:]+seq[k:]
+	
+	for alt in record.alts:
+		mut_seq = seq[:k]+alt[1:]+seq[k:]
 
-	for i in range(1,k+1):
-		ref_kmers.append(seq[i-1:k+i-1])
+		for i in range(1,k+1):
+			ref_kmers.append(seq[i-1:k+i-1])
 
-	for i in range(k+len(record.alts[0][1:])):
-		mut_kmers.append(mut_seq[i: i+k])
-
-	df = df.append({'Chr': record.chrom, 'Pos': record.pos, 'Mutation-ID': record.id, 'Ref-Allele': record.ref, 'Mut-Allele': record.alts[0], 'Ref-Kmers': ref_kmers, 'Mut-Kmers': mut_kmers}, ignore_index=True)
+		for i in range(k+len(record.alts[0][1:])):
+			mutant_kmers.append(mut_seq[i: i+k])
+                  
+	df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts[0], 'ref_kmers': ref_kmers, 'mut_kmers': mutant_kmers}, ignore_index=True)
 	return (df)
 
 
