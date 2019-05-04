@@ -84,8 +84,8 @@ def insertion(record, genome, k, df):
 
 		for i in range(k+len(record.alts[0][1:])):
 			mutant_kmers.append(mut_seq[i: i+k])
-                  
-	df = df.append({'chr': record.chrom, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts[0], 'ref_kmers': ref_kmers, 'mut_kmers': mutant_kmers}, ignore_index=True)
+
+	df = df.append({'Chr': record.chrom, 'Pos': record.pos, 'Mutation-ID': record.id, 'Ref-Allele': record.ref, 'Mut-Allel': record.alts[0], 'Ref-Kmers': ref_kmers, 'Mut-Kmer': mutant_kmers}, ignore_index=True)
 	return (df)
 
 
