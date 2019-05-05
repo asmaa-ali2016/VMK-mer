@@ -43,67 +43,91 @@ def get_args():
 	return arguments
 # ----------------------------------------------------------------------
 
-def get_kmers(seq, k):
-	kmers_lst = []
-	for i in range(len(seq)-k+1):
-		kmers_lst.append(seq[i:i+k])
-	return kmers_lst
-
-
-def snp(record, genome, k, df):
-
-	ref_kmers = []
-	mut_kmers = []
-	seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
-
-	for i in range(1,k+1):
-
-		ref_kmers.append(seq[i-1:k+i-1])
-		if i == 1:
-			mut_kmers.append(seq[i-1:k+i-2]+record.alts[0])
-		elif i == k:
-			mut_kmers.append(record.alts[0]+seq[k:2*k-1])
-		else:
-			mut_kmers.append(seq[i-1:k-1]+record.alts[0]+seq[k:k+i-1])
-
-	df = df.append({'Chr': record.chrom, 'Pos': record.pos, 'Mutation-ID': record.id, 'Ref-Allele': record.ref, 'Mut-Allele': record.alts[0], 'Ref-Kmers': ref_kmers, 'Mut-Kmers': mut_kmers}, ignore_index=True)
-	return (df)
-
-
-def insertion(record, genome, k, df):
+def snp(record, genome, k):
 	
-	ref_kmers = []
-	mutant_kmers = []
-	seq = genome.fetch(record.chrom, record.pos-k+1, record.pos+k)
+	seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-1)
 	
 	for alt in record.alts:
+		ref_kmers = []
+		mutant_kmers = []
+		mut_seq = seq[:k-1]+alt+seq[k:]
+
+		for i in range(1,k+1):
+
+			ref_kmers.append(seq[i-1:k+i-1])
+			mutant_kmers.append(mut_seq[i-1:k+i-1])
+    
+		with open('kmers.tsv','a') as fd:
+			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
+					record.id, record.ref, alt, ref_kmers, mutant_kmers))
+
+	print(".... kmers of new SNP has been added to 'kmers.tsv' file.")
+	
+	
+def insertion(record, genome, k):
+	
+	seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-1)
+	
+	for alt in record.alts:
+		ref_kmers = []
+		mutant_kmers = []
 		mut_seq = seq[:k]+alt[1:]+seq[k:]
 
 		for i in range(1,k+1):
 			ref_kmers.append(seq[i-1:k+i-1])
 
-		for i in range(k+len(record.alts[0][1:])):
-			mutant_kmers.append(mut_seq[i: i+k])
+		for i in range(1, k+len(alt)):
+			mutant_kmers.append(mut_seq[i-1:k+i-1])
+                  
+		with open('kmers.tsv','a') as fd:
+			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
+					record.id, record.ref, alt, ref_kmers, mutant_kmers))
 
-	df = df.append({'Chr': record.chrom, 'Pos': record.pos, 'Mutation-ID': record.id, 'Ref-Allele': record.ref, 'Mut-Allel': record.alts[0], 'Ref-Kmers': ref_kmers, 'Mut-Kmer': mutant_kmers}, ignore_index=True)
-	return (df)
+	print(".... kmers of new Insertion has been added to 'kmers.tsv' file.")
+	
 
-
-def deletion(record, genome, k, df):
-
+def deletion(record, genome, k):
+	
 	for alt in record.alts:
+		ref_kmers = []
+		mutant_kmers = []
+		seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-2+len(record.ref))
+		mut_seq = seq[:k+1]+seq[len(record.ref)+k:]
 
-		start = record.start - k + 2
-		stop = record.stop + k - len(alt)
+		for i in range(1, k+len(record.ref)):
+			ref_kmers.append(seq[i-1:k+i-1])
 
-		original_seq = genome.fetch(record.chrom, start, stop)
-		mutated_seq = original_seq[:k-1]+alt+original_seq[k+len(record.ref)-1:]
+		for i in range(1,k+1):
+			mutant_kmers.append(mut_seq[i-1:k+i-1])
 
-		ref_kmers = get_kmers(original_seq, k)
-		mut_kmers = get_kmers(mutated_seq, k)
+		with open('kmers.tsv','a') as fd:
+			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
+					record.id, record.ref, alt, ref_kmers, mutant_kmers))
 
-		df = df.append({'Chr': record.chrom, 'Pos': record.pos, 'Mutation-ID': record.id, 'Ref-Allele': record.ref, 'Mut-Allele': alt, 'Ref-Kmers': ref_kmers, 'Mut-Kmers': mut_kmers}, ignore_index=True)
-		return (df)
+	print(".... kmers of new Deletion has been added to 'kmers.tsv' file.")
+	
+
+def xml_write(df, out_file):
+	'''
+	xml-write function take dataframe from pandas to convert it's element to
+	xml format row by row and finaly produce out_file.xml
+	'''
+	# creating root for xml file
+	kmer= et.Element("vmk-mer")
+	columns= list(df.columns.values)
+	# creating subelement fro xml file by looping into each item in each column
+    
+	for it in columns:
+		item = et.SubElement(kmer, it)
+
+		for val in df[it]:
+			item.text= (val)
+    	# print xml syntax ..
+		et.dump(item)
+
+    # wrap it in an ElementTree instance, and save as XML
+	tree = et.ElementTree(kmer)
+	tree.write(out_file)
 
 
 def main():
@@ -114,76 +138,44 @@ def main():
 	print('[	  OK       ] Reading vcf file is done.')
 	k = args['k']  # Length of kmer
 
-	df = pd.DataFrame(columns=['Chr', 'Pos', 'Mutation-ID', 'Ref-Allele', 'Mut-Allele', 'Ref-Kmers', 'Mut-Kmers'])
+	with open('kmers.tsv','w') as fd:
+		fd.write('Chr\tPos\tMutation-ID\tRef-Allele\tMut-Allele\tRef-Kmers\tMut-Kmers')
+
 	print('[	PROCESS    ] Extracting mutant kmers...')
 	for record in vcf:
 		if 'TSA' in record.info.keys():
-
+			
 			mutation_type = str(record.info['TSA'])
 			if mutation_type == "SNV":
-				df = snp(record, genome, k, df)
+				snp(record, genome, k)
+				#pass
 			elif mutation_type == "insertion":
-				df = insertion(record, genome, k, df)
+				insertion(record, genome, k)
+				#pass
 			elif mutation_type == "deletion":
-				df = deletion(record, genome, k, df)
+				deletion(record, genome, k)
+				#pass
 
 		elif 'VT' in record.info.keys():
 
 			mutation_type = str(record.info['VT'][0])
 			if mutation_type == "SNP":
-				#df = snp(record, genome, k, df)
-				pass
+				snp(record, genome, k)
+				#pass
 			elif mutation_type == "INDEL":
 				if len(record.alts[0]) > len(record.ref):
-					df = insertion(record, genome, k, df)
+					insertion(record, genome, k)
+					#pass
 				elif len(record.alts[0]) < len(record.ref):
-					df = deletion(record, genome, k, df)
+					deletion(record, genome, k)
+					#pass
+	df = pd.read_csv('kmers.tsv', sep='\t')
+	xml_write(df, "test.xml")
 
 	print('[	  OK       ] All kmers have been extracted successfully.')
-	df.to_csv(args['o']+'/kmers.csv', sep='\t')
-	return(df)
 
 #------------------------------------------------------------------------------
-# Function to make xml file from df
-def xml-write(df, out_file):
-    '''
-	the xml-write function takes data frame from pandas to convert it's an
-	elements to XML format and finally produce out_file.xml
-    '''
-    # creating root for xml file
-    kmer= et.Element("vmk-mer")
-    # extract columns headers from df
-    columns= list(df.columns.values)
-    # creating subelement fro xml file by looping into each item in each column
-    for it in columns:
-    item = et.SubElement(kmer, it)
-        for val in df[it]:
-            item.text= (val)
-    # print xml syntax ..
-    #et.dump(item)
-	# wrap it in an ElementTree instance, and save as XML
-    tree = et.ElementTree(kmer)
-    tree.write(out_file)
-	
-
 
 if __name__ == '__main__':
 	args = get_args()
 	main()
-
-
-#		df = df.append({'chr': record.chr, 'pos': record.pos, 'mutation_id': record.id, 'ref_allele': record.ref, 'mut_allele': record.alts, 'ref_kmers': ref_kmers, 'mut_kmers': mut_kmers}, ignore_index=True)
-
-#SNP
-# of kmers = length of kmer
-
-#Insertion
-# of kmers before = length of kmer
-# of kmers after = length of kmer + length of insertion
-
-#deletion
-# of kmers before = length of kmer
-# of kmers after = length of kmer - length of insertion
-
-# required output >> Chr, pos, mut_id, ref_allele, mut_allele ref_kmers, mut_kmers
-# Note multiple mutations at the same record (comma separated).
