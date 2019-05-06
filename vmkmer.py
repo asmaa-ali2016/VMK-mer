@@ -18,7 +18,7 @@ print('=========================================================================
 import argparse
 import pysam
 import pandas as pd
-import xml.etree.ElementTree as et
+# import xml.etree.ElementTree as et
 
 args = None
 
