@@ -107,28 +107,31 @@ def deletion(record, genome, k):
 	print(".... kmers of new Deletion has been added to 'kmers.tsv' file.")
 	
 
-def xml_write(df, out_file):
-	'''
-	xml-write function take dataframe from pandas to convert it's element to
-	xml format row by row and finaly produce out_file.xml
-	'''
-	# creating root for xml file
-	kmer= et.Element("vmk-mer")
-	columns= list(df.columns.values)
-	# creating subelement fro xml file by looping into each item in each column
+def xml_write(df, filename=None, def_root="vmk-mer", mode="w"):
+    '''
+    xml-write function take dataframe from pandas to convert it's element to
+    xml format row by row and finaly produce out_file.xml
+    '''
     
-	for it in columns:
-		item = et.SubElement(kmer, it)
-
-		for val in df[it]:
-			item.text= (val)
-    	# print xml syntax ..
-		et.dump(item)
-
-    # wrap it in an ElementTree instance, and save as XML
-	tree = et.ElementTree(kmer)
-	tree.write(out_file)
-
+    def to_xml(row):
+        # define root for xml file 
+        xml= ['<{0}>'.format(def_root)]
+        # extract data from dataframe
+        for field in row.index:
+            # append this data to xml list 
+            xml.append('  <{0}>{1}</{0}>'.format(field, row[field]))
+        # close tag for root 
+        xml.append('</{0}>'.format(def_root))
+        return '\n'.join(xml)
+    
+    # join results together
+    res = '\n'.join(df.apply(to_xml, axis=1))
+    
+    if filename is None:
+        return res
+    with open(filename, mode) as f:
+        f.write(res)
+    print('[	  OK       ] saving {0}.xml file is done.'.format(filename))
 
 def main():
 
