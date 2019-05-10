@@ -60,8 +60,6 @@ def snp(record, genome, k):
 		with open('kmers.tsv','a') as fd:
 			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
 					record.id, record.ref, alt, ref_kmers, mutant_kmers))
-
-	print(".... kmers of new SNP has been added to 'kmers.tsv' file.")
 	
 	
 def insertion(record, genome, k):
@@ -82,8 +80,6 @@ def insertion(record, genome, k):
 		with open('kmers.tsv','a') as fd:
 			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
 					record.id, record.ref, alt, ref_kmers, mutant_kmers))
-
-	print(".... kmers of new Insertion has been added to 'kmers.tsv' file.")
 	
 
 def deletion(record, genome, k):
@@ -104,7 +100,6 @@ def deletion(record, genome, k):
 			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
 					record.id, record.ref, alt, ref_kmers, mutant_kmers))
 
-	print(".... kmers of new Deletion has been added to 'kmers.tsv' file.")
 	
 
 def xml_write(df, filename=None, def_root="vmk-mer", mode="w"):
