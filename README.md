@@ -6,7 +6,7 @@ A new approach for genome-wide association studies (GWAS) relies of sequencing d
 ## Aim
 Create a tool that converts VCF file mutations to list of k-mers. For each mutation in the VCF file, it should find the k-mers that got affected by this specific mutation. It should be able to handle SNPs, insertions, deletions, and multiple mutations at the same locus. Finally, the tool should be easy-to-use with multiple options for output file format, output location, and k-mer length.
 
-## Manual (How to use VMK-mer?)
+## Manual
 This tools was build with Python and requires the installation of the following two Python libraries: [pandas](https://pandas.pydata.org/) and [pysam](https://pysam.readthedocs.io/en/latest/installation.html).
 
 ### Using VMK-mer
@@ -26,7 +26,7 @@ The following are the required arguments to run VMK-mer:
 The following are extra arguments that can be used with VMK-mer:
 
 - `-o <path>`: Output file path (directory). default is the current working directory.
-- `--outfmt <TSV | XML>`: specifies the output file format (TSV or XML). The default mode will keep both files.
+- `--outfmt <TSV|XML>`: specifies the output file format (TSV or XML). The default mode will keep both files.
 - `-h|--help`:  show this help message (manual) of the tool and exit.
 - `--version`:   show program's version number and exit.
 
