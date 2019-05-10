@@ -12,7 +12,7 @@ This tools was built with Python and requires the installation of the following 
 ### Using VMK-mer
 To use VMK-mer, run the following command:
 ``` bash
-python3 vmkmer.py -f <input fasta file> -v <input vcf file> -k <kmer length (5)> -o <output directory> --outfmt <output file format (TSV or XML)>
+python3 vmkmer.py -f <input fasta file> -v <input vcf file> -k <kmer length> -o <output directory> --outfmt <output file format (TSV or XML)> --outfile <output file name without extention>
 ``` 
 
 ### Main arguments
@@ -33,7 +33,7 @@ The following are extra arguments that can be used with VMK-mer:
 
 ### VMK-mer WORKFLOW 
 <p align="center">
-  <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="70%" height="70%">
+  <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="90%" height="90%">
 </p>
 
 ### COMMAND-LINE (full)
