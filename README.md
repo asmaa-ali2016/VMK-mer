@@ -13,7 +13,7 @@ python3 vmkmer.py -f <input fasta file> -v <input vcf file> -k <kmer length (5)>
 ### aims
 
 
-### Pipeline flowchart 
+### VMK-mer WORKFLOW 
 <p align="center">
   <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="70%" height="70%">
 </p>
