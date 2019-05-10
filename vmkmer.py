@@ -18,7 +18,7 @@ print('=========================================================================
 import argparse
 import pysam
 import pandas as pd
-# import xml.etree.ElementTree as et
+import xml.etree.ElementTree as et
 
 args = None
 
@@ -58,8 +58,10 @@ def snp(record, genome, k):
 			mutant_kmers.append(mut_seq[i-1:k+i-1])
     
 		with open('kmers.tsv','a') as fd:
-			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
-					record.id, record.ref, alt, ref_kmers, mutant_kmers))
+			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, 
+				record.pos, record.id, record.ref, alt, ref_kmers, mutant_kmers))
+
+	print("... kmers of new SNP has been added to 'kmers.tsv' file")
 	
 	
 def insertion(record, genome, k):
@@ -80,7 +82,10 @@ def insertion(record, genome, k):
 		with open('kmers.tsv','a') as fd:
 			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
 					record.id, record.ref, alt, ref_kmers, mutant_kmers))
+
+	print("... kmers of new Insertion has been added to 'kmers.tsv' file")
 	
+
 
 def deletion(record, genome, k):
 	
@@ -100,8 +105,9 @@ def deletion(record, genome, k):
 			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
 					record.id, record.ref, alt, ref_kmers, mutant_kmers))
 
+	print("... kmers of new Deletion has been added to 'kmers.tsv' file")
 	
-
+# Function to make xml file from df
 def xml_write(df, filename=None, def_root="vmk-mer", mode="w"):
     '''
     xml-write function take dataframe from pandas to convert it's element to
@@ -126,7 +132,8 @@ def xml_write(df, filename=None, def_root="vmk-mer", mode="w"):
         return res
     with open(filename, mode) as f:
         f.write(res)
-    print('[	  OK       ] saving {0}.xml file is done.'.format(filename))
+    print('[	  OK       ] saving {0} file is done.'.format(filename))
+
 
 def main():
 
@@ -140,7 +147,9 @@ def main():
 		fd.write('Chr\tPos\tMutation-ID\tRef-Allele\tMut-Allele\tRef-Kmers\tMut-Kmers')
 
 	print('[	PROCESS    ] Extracting mutant kmers...')
+
 	for record in vcf:
+
 		if 'TSA' in record.info.keys():
 			
 			mutation_type = str(record.info['TSA'])
@@ -167,8 +176,9 @@ def main():
 				elif len(record.alts[0]) < len(record.ref):
 					deletion(record, genome, k)
 					#pass
+
 	df = pd.read_csv('kmers.tsv', sep='\t')
-	xml_write(df, "test.xml")
+	xml_write(df, "kmers.xml")
 
 	print('[	  OK       ] All kmers have been extracted successfully.')
 
