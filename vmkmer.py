@@ -18,6 +18,8 @@ print('=========================================================================
 import argparse
 import pysam
 import pandas as pd
+import sys
+import time
 
 args = None
 
