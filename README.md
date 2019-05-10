@@ -1,13 +1,13 @@
 # VMK-mer: Standalone tool that converts mutations in VCF file into the k-mer sequences that were affected by these mutations.
 
 ## Introduction
-A new approach for genome-wide association studies (GWAS) relies of sequencing data instead of microarrays. In this approach, some tools build their association studies based on k-mers frequency that change between healthy and diseased individuals. Instead of counting the k-mers throughout the whole genome, we are building a tools that generates k-mers, of any size, only around the sites of mutations, whether SNPs or indels. This will reducae the required computational power needed for such GWAS studies. Moreover, the output can be used for other disease-networks studies.
+A new approach for genome-wide association studies (GWAS) relies of sequencing data instead of microarrays. In this approach, some tools build their association studies based on k-mers frequency that change between healthy and diseased individuals. Instead of counting the k-mers throughout the whole genome, we are building a tools that generates k-mers, of any size, only around the sites of mutations, whether SNPs or indels. This will reduce the required computational power needed for such GWAS studies. Moreover, the output can be used for other disease-networks studies.
 
 ## Aim
 Create a tool that converts VCF file mutations to list of k-mers. For each mutation in the VCF file, it should find the k-mers that got affected by this specific mutation. It should be able to handle SNPs, insertions, deletions, and multiple mutations at the same locus. Finally, the tool should be easy-to-use with multiple options for output file format, output directory, and k-mer length.
 
 ## Manual
-This tools was build with Python and requires the installation of the following two Python libraries: [pandas](https://pandas.pydata.org/) and [pysam](https://pysam.readthedocs.io/en/latest/installation.html).
+This tools was built with Python and requires the installation of the following two Python libraries: [pandas](https://pandas.pydata.org/) and [pysam](https://pysam.readthedocs.io/en/latest/installation.html).
 
 ### Using VMK-mer
 To use VMK-mer, run the following command:
@@ -56,7 +56,7 @@ Optional arguments:
 ## Team Memebers:
 - Ahmed Omar
 - Asmaa Ali
-- Mohamed Magdy
+- Mohamed AboelEla
 - Mohamed Refaat
 - Ruwaa Mohamed **(Team Leader)**
 - Usama Bakry
