@@ -161,6 +161,18 @@ def deletion(record, genome, k):
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
+def progress(iterations, total):
+    bar_len = 50
+    fill_len = int(round(bar_len * iterations / float(total)))
+    percent = round(iterations / float(total) * 100.0, 1)
+    bar = "#" * fill_len + "-" * (bar_len - fill_len)
+    time.sleep(0.1)
+    sys.stdout.write("%s [%s] %s%s   %s\r" %
+                     ("Extracting K-mers", bar, percent, "%", "Complete"))
+    sys.stdout.flush()
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
 class FileFormatError(IOError):
 	'''raise this error when input file format is not acceptable'''
 
