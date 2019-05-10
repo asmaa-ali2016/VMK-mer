@@ -33,7 +33,7 @@ The following are extra arguments that can be used with VMK-mer:
 
 ### VMK-mer WORKFLOW 
 <p align="center">
-  <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="70%" height="70%">
+  <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="90%" height="90%">
 </p>
 
 ### COMMAND-LINE (full)
