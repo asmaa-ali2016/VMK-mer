@@ -12,7 +12,7 @@ This tools was built with Python and requires the installation of the following 
 ### Using VMK-mer
 To use VMK-mer, run the following command:
 ``` bash
-python3 vmkmer.py -f <input fasta file> -v <input vcf file> -k <kmer length> -o <output directory> --outfmt <output file format (TSV or XML)> --outfile <output file name without extention>
+python vmkmer.py -f <input fasta file> -v <input vcf file> -k <kmer length> -o <output directory> --outfmt <output file format (TSV or XML)> --outfile <output file name without extention>
 ``` 
 
 ### Main arguments
@@ -27,6 +27,7 @@ The following are extra arguments that can be used with VMK-mer:
 
 - `-o <path>`: Output file path (directory). default is the current working directory.
 - `--outfmt <TSV|XML>`: specifies the output file format (`TSV` or `XML`). The default mode will keep both files.
+- `--outfile <str>`: The output file name without extention. The default value is "vmkmer-results".
 - `-h|--help`:  show the help message (manual) of the tool and exit.
 - `--version`:   show program's version number and exit.
 
@@ -38,17 +39,18 @@ The following are extra arguments that can be used with VMK-mer:
 
 ### COMMAND-LINE (full)
 ```bash
-python vmkmer.py [-h] -f <reference.fasta> -v <input.vcf> -k <k-mer size (5)> [-o <output_file_path>] [--outfmt <output file format (TSV or XML)>] [--version]
+python vmkmer.py -f <reference.fasta> -v <input.vcf> -k <k-mer size (5)> [-o <output_file_path>] [--outfile <base output file name>] [--outfmt <output file format (TSV or XML)>]
 
 Main arguments
-  -f F        Input fasta file
-  -v V        Input vcf file
-  -k K        Length of k-mer
+  -f F        Input fasta file (*.fasta)
+  -v V        Input vcf file (*.vcf)
+  -k K        Length of k-mer (e.g. 5)
 
 Optional arguments:
   -h, --help  show the help message and exit
-  -o O        The output directory
-  --outfmt    output file format (TSV or XML)
+  -o O        The output directory - default: current directory
+  --outfmt    output file format (TSV or XML). default value would produce both files.
+  --outfile OUTFILE  The output file name without extention - default: vmkmer-results
   --version   show program's version number and exit
 
 ```
