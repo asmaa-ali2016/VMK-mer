@@ -10,7 +10,7 @@ VMK-mer: Standalone tool that converts mutations in VCF file into k-mer sequence
 
 
 ### Pipeline flowchart 
-![VMK-mer tool pipeline: reading input fasta and vcf files; for each record: read the mutation from vcf, get the ref. seq. from fasta, generate k-mers of the ref and mutant based on mutation type, save to the output file.]( "VMK-mer tool pipeline.")
+![VMK-mer tool pipeline: reading input fasta and vcf files; for each record: read the mutation from vcf, get the ref. seq. from fasta, generate k-mers of the ref and mutant based on mutation type, save to the output file.](https://drive.google.com/ "VMK-mer tool pipeline.")
 
 
 ## Manual (How to use VMK-mer?)
