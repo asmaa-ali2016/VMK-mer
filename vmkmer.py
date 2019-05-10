@@ -85,7 +85,7 @@ def snp(record, genome, k):
 	# Extracting the sequence surrounding the position of the mutation. 
 	seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-1)
 	
-	# This statement handles the issue of empty "alt" field in vcf format.
+	# This statement handles the issue of empty "alt" field in the current record of vcf file.
 	if record.alts == None:
 		ref_kmers = []
 		mutant_kmers = []
@@ -102,7 +102,8 @@ def snp(record, genome, k):
 			mutant_kmers = []
 			mut_seq = seq[:k-1]+alt+seq[k:]
 
-			# loop on the length of kmer entered by the user to create number of kmers equal to the length of kmer in this case (SNP).
+			# loop on the length of kmer entered by the user to create the suitable number of kmers.
+			# For (SNP) The number of kmers = the length of kmer.
 			for i in range(1,k+1):
 
 				ref_kmers.append(seq[i-1:k+i-1])
@@ -117,14 +118,18 @@ def insertion(record, genome, k):
 	
 	seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-1)
 	
+	# loop on each alt value in the alt field of the current record.
 	for alt in record.alts:
 		ref_kmers = []
 		mutant_kmers = []
 		mut_seq = seq[:k]+alt[1:]+seq[k:]
 
+		# loop on the length of kmer entered by the user to create the suitable number of kmers.
+		# For (insertion) The number of Reference kmers = the length of kmer 
 		for i in range(1,k+1):
 			ref_kmers.append(seq[i-1:k+i-1])
 
+		# and the number of Mutant kmers = length of kmer+length of the inserted nucleotides.
 		for i in range(1, k+len(alt)):
 			mutant_kmers.append(mut_seq[i-1:k+i-1])
                   
@@ -135,15 +140,19 @@ def insertion(record, genome, k):
 # ----------------------------------------------------------------------
 def deletion(record, genome, k):
 	
+	# loop on each alt value in the alt field of the current record.
 	for alt in record.alts:
 		ref_kmers = []
 		mutant_kmers = []
 		seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-2+len(record.ref))
 		mut_seq = seq[:k+1]+seq[len(record.ref)+k:]
-
+		
+		# loop on the length of kmer entered by the user to create the suitable number of kmers.
+		# For (insertion) The number of Reference kmers = length of kmer+length of the inserted nucleotides.
 		for i in range(1, k+len(record.ref)):
 			ref_kmers.append(seq[i-1:k+i-1])
-
+			
+		# and the number of Mutant kmers = the length of kmer.
 		for i in range(1,k+1):
 			mutant_kmers.append(mut_seq[i-1:k+i-1])
 
