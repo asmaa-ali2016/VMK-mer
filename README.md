@@ -12,7 +12,7 @@ This tools was built with Python and requires the installation of the following 
 ### Using VMK-mer
 To use VMK-mer, run the following command:
 ``` bash
-python vmkmer.py -f <input fasta file> -v <input vcf file> -k <kmer length> -o <output directory> --outfmt <output file format (TSV or XML)> --outfile <output file name without extention>
+python vmkmer.py -f <reference.fasta> -v <input.vcf> -k <kmer length> -o <output directory> --outfmt <(TSV | XML)> --outfile <output>
 ``` 
 
 ### Main arguments
@@ -27,9 +27,7 @@ The following are extra arguments that can be used with VMK-mer:
 
 - `-o <path>`: Output file path (directory). default is the current working directory.
 - `--outfmt <TSV|XML>`: specifies the output file format (`TSV` or `XML`). The default mode will keep both files.
-<<<<<<< HEAD
-- `--outfile <str>`: The output file name without extention. The default value is "vmkmer-results".
-=======
+- `--outfile <str>`: The basename of the output file; _i.e._ without extention - default: `vmkmer-results`.
 - `--outfile <Output File Name>` : The output file name without extention. The default mode will be vmkmer-.
 >>>>>>> a64e20999d9185ea9448c67433bc6d99f37ff9e5
 - `-h|--help`:  show the help message (manual) of the tool and exit.
@@ -54,7 +52,7 @@ Optional arguments:
   -h, --help  show the help message and exit
   -o O        The output directory - default: current directory
   --outfmt    output file format (TSV or XML). default value would produce both files.
-  --outfile OUTFILE  The output file name without extention - default: vmkmer-results
+  --outfile OUTFILE  The basename of the output file; _i.e._ without extention - default: "vmkmer-results"
   --version   show program's version number and exit
 
 ```
