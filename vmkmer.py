@@ -137,12 +137,26 @@ def deletion(record, genome, k):
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
+class FileFormatError(IOError):
+	'''raise this when input file format is not acceptable'''
+
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
 def main():
 
-	genome = pysam.FastaFile(args['f'])  # open fasta file
-	print('[	  OK       ] Reading Fasta file is done.')
-	vcf = pysam.VariantFile(args['v'])  # open vcf file
-	print('[	  OK       ] Reading vcf file is done.')
+	if not args['f'].endswith(".fa"):
+		raise FileFormatError("\nInput File is not in Fasta format.")
+	else:
+		genome = pysam.FastaFile(args['f'])  # open fasta file
+		print('[	  OK       ] Reading Fasta file is done.')
+
+	if not args['v'].endswith(".vcf"):
+		raise FileFormatError("\nInput File is not in VCF format.")
+	else:
+		vcf = pysam.VariantFile(args['v'])  # open vcf file
+		print('[	  OK       ] Reading vcf file is done.')
+		
 	k = args['k']  # Length of kmer
 
 
