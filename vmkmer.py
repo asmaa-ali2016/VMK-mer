@@ -170,17 +170,17 @@ class FileFormatError(IOError):
 def main():
     
 	# Exception handling for input files format.
-	if not args['f'].endswith(".fa"):
-		raise FileFormatError("\nInput File is not in Fasta format.")
-	else:
+	if args['f'].endswith(".fa") or args['f'].endswith(".fasta"):
 		genome = pysam.FastaFile(args['f'])  # open fasta file
 		print('[	  OK       ] Reading Fasta file is done.')
-
-	if not args['v'].endswith(".vcf"):
-		raise FileFormatError("\nInput File is not in VCF format.")
 	else:
+		raise FileFormatError("\n[	  ERROR    ] Input File is not in Fasta format.")
+
+	if args['v'].endswith(".vcf"):
 		vcf = pysam.VariantFile(args['v'])  # open vcf file
 		print('[	  OK       ] Reading vcf file is done.')
+	else:
+		raise FileFormatError("\n[	  ERROR    ] Input File is not in VCF format.")
 		
 	k = args['k']  # Length of kmer
 
