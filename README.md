@@ -27,6 +27,7 @@ The following are extra arguments that can be used with VMK-mer:
 
 - `-o <path>`: Output file path (directory). default is the current working directory.
 - `--outfmt <TSV|XML>`: specifies the output file format (`TSV` or `XML`). The default mode will keep both files.
+- `--outfile <Output File Name>` : The output file name without extention. The default mode will be vmkmer-.
 - `-h|--help`:  show the help message (manual) of the tool and exit.
 - `--version`:   show program's version number and exit.
 
