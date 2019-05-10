@@ -162,13 +162,14 @@ def deletion(record, genome, k):
 
 # ----------------------------------------------------------------------
 class FileFormatError(IOError):
-	'''raise this when input file format is not acceptable'''
+	'''raise this error when input file format is not acceptable'''
 
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
 def main():
-
+    
+    # Exception handling for input files format.
 	if not args['f'].endswith(".fa"):
 		raise FileFormatError("\nInput File is not in Fasta format.")
 	else:
@@ -183,16 +184,18 @@ def main():
 		
 	k = args['k']  # Length of kmer
 
-
+    # Handling different output formats.
 	if args['outfmt'].upper() == 'TSV':
 		with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
 		head_dict={'chr': 'Chr', 'pos': 'Pos', 'id': 'Mutation-ID', 'ref':'Ref-Allele' , 'alt':'Mut-Allele', 'refk':'Ref-Kmers', 'mutk':'Mut-Kmers'}
 		write_in_tsv("Head",head_dict)
+        
 	elif args['outfmt'].upper() == 'XML':
 		with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
-	elif args['outfmt'] == 'both':
+	
+    elif args['outfmt'] == 'both':
 		with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
 		with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
@@ -203,30 +206,36 @@ def main():
 	print('[	PROCESS    ] Extracting mutant kmers, please wait...')
 
 	for record in vcf:
-
+        
+        # Handling the mutation type included in the info tag of some VCF file as "TSA".
 		if 'TSA' in record.info.keys():
 			
 			mutation_type = str(record.info['TSA'])
 			if mutation_type == "SNV":
 				snp(record, genome, k)
 				#pass
+                
 			elif mutation_type == "insertion":
 				insertion(record, genome, k)
 				#pass
+                
 			elif mutation_type == "deletion":
 				deletion(record, genome, k)
 				#pass
 
+        # Handling the mutation type included in the info tag of some VCF file as "VT".
 		elif 'VT' in record.info.keys():
 
 			mutation_type = str(record.info['VT'][0])
 			if mutation_type == "SNP":
 				snp(record, genome, k)
 				#pass
+                
 			elif mutation_type == "INDEL":
 				if len(record.alts[0]) > len(record.ref):
 					insertion(record, genome, k)
 					#pass
+                    
 				elif len(record.alts[0]) < len(record.ref):
 					deletion(record, genome, k)
 					#pass
