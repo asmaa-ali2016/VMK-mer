@@ -30,15 +30,6 @@ optional arguments:
   -k K        Length of k-mer
   -o O        The output directory
   --version   show program's version number and exit
-vmkmer.py [-h] -f F -v V -k K [-o O] [--version]
-
-optional arguments:
-  -h, --help  show this help message and exit
-  -f F        Input fasta file
-  -v V        Input vcf file
-  -k K        Length of k-mer
-  -o O        The output directory
-  --version   show program's version number and exit
 
 ```
 
