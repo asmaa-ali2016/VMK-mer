@@ -169,7 +169,7 @@ class FileFormatError(IOError):
 # ----------------------------------------------------------------------
 def main():
     
-    # Exception handling for input files format.
+	# Exception handling for input files format.
 	if not args['f'].endswith(".fa"):
 		raise FileFormatError("\nInput File is not in Fasta format.")
 	else:
@@ -184,7 +184,7 @@ def main():
 		
 	k = args['k']  # Length of kmer
 
-    # Handling different output formats.
+	# Handling different output formats.
 	if args['outfmt'].upper() == 'TSV':
 		with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
@@ -195,7 +195,7 @@ def main():
 		with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
 	
-    elif args['outfmt'] == 'both':
+	elif args['outfmt'] == 'both':
 		with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
 		with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
@@ -207,7 +207,7 @@ def main():
 
 	for record in vcf:
         
-        # Handling the mutation type included in the info tag of some VCF file as "TSA".
+		# Handling the mutation type included in the info tag of some VCF file as "TSA".
 		if 'TSA' in record.info.keys():
 			
 			mutation_type = str(record.info['TSA'])
@@ -223,7 +223,7 @@ def main():
 				deletion(record, genome, k)
 				#pass
 
-        # Handling the mutation type included in the info tag of some VCF file as "VT".
+        	# Handling the mutation type included in the info tag of some VCF file as "VT".
 		elif 'VT' in record.info.keys():
 
 			mutation_type = str(record.info['VT'][0])
