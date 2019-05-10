@@ -18,7 +18,6 @@ print('=========================================================================
 import argparse
 import pysam
 import pandas as pd
-import xml.etree.ElementTree as et
 
 args = None
 
@@ -31,39 +30,74 @@ def get_args():
 	)
 
 	# required argument
-	parser.add_argument('-f', action="store", required=True, help='Input fasta file')
-	parser.add_argument('-v', action="store", required=True, help='Input vcf file')
-	parser.add_argument('-k', action="store", required=True, type=int, help='Length of k-mer')
+	parser.add_argument('-f', action="store", required=True, help='Input fasta file (*.fasta)')
+	parser.add_argument('-v', action="store", required=True, help='Input vcf file (*.vcf)')
+	parser.add_argument('-k', action="store", required=True, type=int, help='Length of k-mer (e.g. 5)')
 
 	# optional arguments
-	parser.add_argument('-o', action="store", help='The output directory', default='.')
+	parser.add_argument('-o', action="store", help='The output directory - default: current directory', default='.')
+	parser.add_argument('--outfmt', action="store", help='The output file type [TSV or XML] - default: both', default='both')
+	parser.add_argument('--outfile', action="store", help='The output file name without extention - default: vmkmer-results', default='vmkmer-results')
 	parser.add_argument('--version', action='version', version='%(prog)s 1.0')
 
 	arguments = vars(parser.parse_args())
 	return arguments
 # ----------------------------------------------------------------------
 
+# ----------------------------------------------------------------------
+def write_in_tsv(mut,mut_dict):
+	with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
+		fd.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(mut_dict['chr'], 
+					mut_dict['pos'], mut_dict['id'], mut_dict['ref'], mut_dict['alt'], mut_dict['refk'], mut_dict['mutk']))
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+def write_in_xml(mut,mut_dict):
+	with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
+		fd.write('<{}>\n\t<Chr>{}</Chr>\n\t<Pos>{}</Pos>\n\t<Mutation-ID>{}</Mutation-ID>\n\t<Ref-Allele>{}</Ref-Allele>\n\t<Mut-Allele>{}</Mut-Allele>\n\t<Ref-Kmers>{}</Ref-Kmers>\n\t<Mut-Kmers>{}</Mut-Kmers>\n</{}>\n'.format(mut,mut_dict['chr'],mut_dict['pos'], mut_dict['id'], mut_dict['ref'], mut_dict['alt'], mut_dict['refk'], mut_dict['mutk'],mut))
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+def add(mut,mut_dict):
+	if args['outfmt'].upper() == 'TSV':
+		write_in_tsv(mut,mut_dict)
+	elif args['outfmt'].upper() == 'XML':
+		write_in_xml(mut,mut_dict)
+	elif args['outfmt'] == 'both':
+		write_in_tsv(mut,mut_dict)
+		write_in_xml(mut,mut_dict)
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
 def snp(record, genome, k):
 	
 	seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-1)
 	
-	for alt in record.alts:
+	if record.alts == None:
 		ref_kmers = []
 		mutant_kmers = []
+		alt='N'
 		mut_seq = seq[:k-1]+alt+seq[k:]
 
 		for i in range(1,k+1):
-
 			ref_kmers.append(seq[i-1:k+i-1])
 			mutant_kmers.append(mut_seq[i-1:k+i-1])
-    
-		with open('kmers.tsv','a') as fd:
-			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, 
-				record.pos, record.id, record.ref, alt, ref_kmers, mutant_kmers))
+	else:
+		for alt in record.alts:
+			ref_kmers = []
+			mutant_kmers = []
+			mut_seq = seq[:k-1]+alt+seq[k:]
 
-	print("... kmers of new SNP has been added to 'kmers.tsv' file")
-	
-	
+			for i in range(1,k+1):
+
+				ref_kmers.append(seq[i-1:k+i-1])
+				mutant_kmers.append(mut_seq[i-1:k+i-1])
+
+	snp_dict={'chr': record.chrom, 'pos': record.pos, 'id': record.id, 'ref':record.ref , 'alt':alt, 'refk':ref_kmers, 'mutk':mutant_kmers}
+	add("SNP",snp_dict)
+# ----------------------------------------------------------------------	
+
+# ----------------------------------------------------------------------	
 def insertion(record, genome, k):
 	
 	seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-1)
@@ -79,14 +113,11 @@ def insertion(record, genome, k):
 		for i in range(1, k+len(alt)):
 			mutant_kmers.append(mut_seq[i-1:k+i-1])
                   
-		with open('kmers.tsv','a') as fd:
-			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
-					record.id, record.ref, alt, ref_kmers, mutant_kmers))
+		ins_dict={'chr': record.chrom, 'pos': record.pos, 'id': record.id, 'ref':record.ref , 'alt':alt, 'refk':ref_kmers, 'mutk':mutant_kmers}
+		add("Insertion",ins_dict)
+# ----------------------------------------------------------------------	
 
-	print("... kmers of new Insertion has been added to 'kmers.tsv' file")
-	
-
-
+# ----------------------------------------------------------------------
 def deletion(record, genome, k):
 	
 	for alt in record.alts:
@@ -101,40 +132,11 @@ def deletion(record, genome, k):
 		for i in range(1,k+1):
 			mutant_kmers.append(mut_seq[i-1:k+i-1])
 
-		with open('kmers.tsv','a') as fd:
-			fd.write('\n{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(record.chrom, record.pos, 
-					record.id, record.ref, alt, ref_kmers, mutant_kmers))
+		del_dict={'chr': record.chrom, 'pos': record.pos, 'id': record.id, 'ref':record.ref , 'alt':alt, 'refk':ref_kmers, 'mutk':mutant_kmers}
+		add("Deletion",del_dict)
+# ----------------------------------------------------------------------
 
-	print("... kmers of new Deletion has been added to 'kmers.tsv' file")
-	
-# Function to make xml file from df
-def xml_write(df, filename=None, def_root="vmk-mer", mode="w"):
-    '''
-    xml-write function take dataframe from pandas to convert it's element to
-    xml format row by row and finaly produce out_file.xml
-    '''
-    
-    def to_xml(row):
-        # define root for xml file 
-        xml= ['<{0}>'.format(def_root)]
-        # extract data from dataframe
-        for field in row.index:
-            # append this data to xml list 
-            xml.append('  <{0}>{1}</{0}>'.format(field, row[field]))
-        # close tag for root 
-        xml.append('</{0}>'.format(def_root))
-        return '\n'.join(xml)
-    
-    # join results together
-    res = '\n'.join(df.apply(to_xml, axis=1))
-    
-    if filename is None:
-        return res
-    with open(filename, mode) as f:
-        f.write(res)
-    print('[	  OK       ] saving {0} file is done.'.format(filename))
-
-
+# ----------------------------------------------------------------------
 def main():
 
 	genome = pysam.FastaFile(args['f'])  # open fasta file
@@ -143,10 +145,24 @@ def main():
 	print('[	  OK       ] Reading vcf file is done.')
 	k = args['k']  # Length of kmer
 
-	with open('kmers.tsv','w') as fd:
-		fd.write('Chr\tPos\tMutation-ID\tRef-Allele\tMut-Allele\tRef-Kmers\tMut-Kmers')
 
-	print('[	PROCESS    ] Extracting mutant kmers...')
+	if args['outfmt'].upper() == 'TSV':
+		with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
+			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
+		head_dict={'chr': 'Chr', 'pos': 'Pos', 'id': 'Mutation-ID', 'ref':'Ref-Allele' , 'alt':'Mut-Allele', 'refk':'Ref-Kmers', 'mutk':'Mut-Kmers'}
+		write_in_tsv("Head",head_dict)
+	elif args['outfmt'].upper() == 'XML':
+		with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
+			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
+	elif args['outfmt'] == 'both':
+		with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
+			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
+		with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
+			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
+	
+
+
+	print('[	PROCESS    ] Extracting mutant kmers, please wait...')
 
 	for record in vcf:
 
@@ -177,11 +193,7 @@ def main():
 					deletion(record, genome, k)
 					#pass
 
-	df = pd.read_csv('kmers.tsv', sep='\t')
-	xml_write(df, "kmers.xml")
-
 	print('[	  OK       ] All kmers have been extracted successfully.')
-
 #------------------------------------------------------------------------------
 
 if __name__ == '__main__':
