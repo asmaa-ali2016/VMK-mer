@@ -12,7 +12,7 @@ This tools was built with Python and requires the installation of the following 
 ### Using VMK-mer
 To use VMK-mer, run the following command:
 ``` bash
-python vmkmer.py -f <reference.fasta> -v <input.vcf> -k <kmer length> -o <output directory> --outfmt <(TSV | XML)> --outfile <output>
+python vmkmer.py -f reference.fasta -v input.vcf -k 5 -o "$(pwd)" --outfmt XML --outfile vmkmer_results
 ``` 
 
 ### Main arguments
