@@ -4,6 +4,10 @@
 ```
 python3 vmkmer.py -f <input fasta file> -v <input vcf file> -k <kmer length (5)> -o <output directory> --outfmt <output file format (TSV or XML)>
 ``` 
+### VMK-mer WORKFLOW 
+<p align="center">
+  <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="70%" height="70%">
+</p>
 
 ## Project Proposal
 
@@ -11,12 +15,6 @@ python3 vmkmer.py -f <input fasta file> -v <input vcf file> -k <kmer length (5)>
 
 
 ### aims
-
-
-### VMK-mer WORKFLOW 
-<p align="center">
-  <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="70%" height="70%">
-</p>
 
 
 ## Manual (How to use VMK-mer?)
