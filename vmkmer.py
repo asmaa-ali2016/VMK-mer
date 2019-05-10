@@ -23,7 +23,9 @@ args = None
 
 # ----------------------------------------------------------------------
 def get_args():
-	""""""
+	"""
+	get_args() function creates required and optional arguments and returns a copy of the argument list to be used within the script.
+	"""
 	parser = argparse.ArgumentParser(
 		description="VMK-mer - Standalone tool that converts mutations in VCF file into\nk-mer sequences that are affected by these mutations.",
 		epilog="This is where you might put example usage"
@@ -46,6 +48,9 @@ def get_args():
 
 # ----------------------------------------------------------------------
 def write_in_tsv(mut,mut_dict):
+	"""
+	This function generate the output in tsv format.
+	"""
 	with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
 		fd.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(mut_dict['chr'], 
 					mut_dict['pos'], mut_dict['id'], mut_dict['ref'], mut_dict['alt'], mut_dict['refk'], mut_dict['mutk']))
@@ -53,12 +58,18 @@ def write_in_tsv(mut,mut_dict):
 
 # ----------------------------------------------------------------------
 def write_in_xml(mut,mut_dict):
+	"""
+	This function generate the output in xml format.
+	"""
 	with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
 		fd.write('<{}>\n\t<Chr>{}</Chr>\n\t<Pos>{}</Pos>\n\t<Mutation-ID>{}</Mutation-ID>\n\t<Ref-Allele>{}</Ref-Allele>\n\t<Mut-Allele>{}</Mut-Allele>\n\t<Ref-Kmers>{}</Ref-Kmers>\n\t<Mut-Kmers>{}</Mut-Kmers>\n</{}>\n'.format(mut,mut_dict['chr'],mut_dict['pos'], mut_dict['id'], mut_dict['ref'], mut_dict['alt'], mut_dict['refk'], mut_dict['mutk'],mut))
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
 def add(mut,mut_dict):
+	"""
+	This function write the output in the required format which the user has selected using the --outfmt argument.
+	"""
 	if args['outfmt'].upper() == 'TSV':
 		write_in_tsv(mut,mut_dict)
 	elif args['outfmt'].upper() == 'XML':
@@ -71,8 +82,10 @@ def add(mut,mut_dict):
 # ----------------------------------------------------------------------
 def snp(record, genome, k):
 	
+	# Extracting the sequence surrounding the position of the mutation. 
 	seq = genome.fetch(record.chrom, record.pos-k, record.pos+k-1)
 	
+	# This statement handles the issue of empty "alt" field in vcf format.
 	if record.alts == None:
 		ref_kmers = []
 		mutant_kmers = []
@@ -83,11 +96,13 @@ def snp(record, genome, k):
 			ref_kmers.append(seq[i-1:k+i-1])
 			mutant_kmers.append(mut_seq[i-1:k+i-1])
 	else:
+		# loop on each alt value in the alt field of the current record.
 		for alt in record.alts:
 			ref_kmers = []
 			mutant_kmers = []
 			mut_seq = seq[:k-1]+alt+seq[k:]
 
+			# loop on the length of kmer entered by the user to create number of kmers equal to the length of kmer in this case (SNP).
 			for i in range(1,k+1):
 
 				ref_kmers.append(seq[i-1:k+i-1])
