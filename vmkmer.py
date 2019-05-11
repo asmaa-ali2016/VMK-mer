@@ -3,23 +3,22 @@
 #             k-mer sequences that are affected by these mutations.      #
 #  - Python Script                                                       #
 #  - April 28,2019                                                       #
-#  - Copyright: Ahmed Omar, Asmaa Ali, Mohamed Magdy, Mohamed Refaat,    #
+#  - Copyright: Ahmed Omar, Asmaa Ali, Mohamed AboelEla, Mohamed Refaat, #
 #               Ruwaa Mohamed, and Usama Bakry.                          #
 #  - Nile University                                                     #
 ##########################################################################
 
 ## project Description
-print('===============================================================================')
-print('VMK-mer v1.0 | by A. Omar, A. Ali, M. Magdy, M. Refaat, R. Mohamed and U. Bakry')
+print('==================================================================================')
+print('VMK-mer v1.0 | by A. Omar, A. Ali, M. AboelEla, M. Refaat, R. Mohamed and U. Bakry')
 print('Check https://github.com/ubakry/VMK-mer for updates.')
-print('===============================================================================')
+print('==================================================================================')
 
 # Importing libraries
 import argparse
 import pysam
 import pandas as pd
 import sys
-import time
 
 args = None
 
@@ -168,7 +167,6 @@ def progress(iterations, total):
     fill_len = int(round(bar_len * iterations / float(total)))
     percent = round(iterations / float(total) * 100.0, 1)
     bar = "#" * fill_len + "-" * (bar_len - fill_len)
-    # time.sleep(0.1)
     sys.stdout.write("%s [%s] %s%s   %s\r" %
                      ("Extracting K-mers", bar, percent, "%", "Complete"))
     sys.stdout.flush()
@@ -262,8 +260,8 @@ def main():
 				elif len(record.alts[0]) < len(record.ref):
 					deletion(record, genome, k)
 					#pass
-        iterations += 1
-        progress (iterations, total)
+		iterations += 1
+		progress (iterations, total)
 	print('[	  OK       ] All kmers have been extracted successfully.')
 #------------------------------------------------------------------------------
 
