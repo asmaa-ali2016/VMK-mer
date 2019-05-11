@@ -55,6 +55,24 @@ Optional arguments:
 
 ```
 
+### VMK-mer TEST CASES
+This tool was tested on the files of Chromosome 21, Chromosome 22 and Chromosome Y.
+You can download these files using the following commands:
+
+```bash
+For chr21:
+wget ftp://ftp.ensembl.org/pub/release-96/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.21.fa.gz
+wget ftp://ftp.ensembl.org/pub/release-96/variation/vcf/homo_sapiens/homo_sapiens-chr21.vcf.gz
+
+For chr22:
+wget ftp://ftp.ensembl.org/pub/release-96/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.22.fa.gz
+wget ftp://ftp.ensembl.org/pub/release-96/variation/vcf/homo_sapiens/homo_sapiens-chr22.vcf.gz
+
+For chrY:
+wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrY.phase3_integrated_v2a.20130502.genotypes.vcf.gz
+wget ftp://ftp.1000genomes.ebi.ac.uk//vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz
+```
+
 ## Team Memebers:
 - Ahmed Omar
 - Asmaa Ali
