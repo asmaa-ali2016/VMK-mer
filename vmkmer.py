@@ -262,7 +262,7 @@ def main():
 					#pass
 		iterations += 1
 		progress (iterations, total)
-	print('[	  OK       ] All kmers have been extracted successfully.')
+	print('\n[	  OK       ] All kmers have been extracted successfully.')
 #------------------------------------------------------------------------------
 
 if __name__ == '__main__':
