@@ -9,17 +9,11 @@ Create a tool that converts VCF file mutations to list of k-mers. For each mutat
 ## Manual
 This tools was built with Python and requires the installation of the following two Python libraries: [pandas](https://pandas.pydata.org/) and [pysam](https://pysam.readthedocs.io/en/latest/installation.html).
 
-### Using VMK-mer
-To use VMK-mer, run the following command:
-``` bash
-python vmkmer.py -f reference.fasta -v input.vcf -k 5 -o "$(pwd)" --outfmt XML --outfile vmkmer_results
-``` 
-
 ### Main arguments
 The following are the required arguments to run VMK-mer:
 
-- `-f <reference.fasta>`: input fasta file. It should be the same reference used for variant calling.
-- `-v <input.vcf>`: input VCF file. VMK-mer should handle all VCF formats till v.4.3.
+- `-f <fasta_file>`: input fasta file. It should be the same reference used for variant calling.
+- `-v <vcf_file>`: input VCF file. VMK-mer should handle all VCF formats till v.4.3.
 - `-k <int>`: the k-mer size used of the mutated k-mers.
 
 ### Optional arguments
@@ -32,17 +26,12 @@ The following are extra arguments that can be used with VMK-mer:
 - `--version`:   show program's version number and exit.
 
 
-### VMK-mer WORKFLOW 
-<p align="center">
-  <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="90%" height="90%">
-</p>
-
-### COMMAND-LINE (full)
+### Using VMK-mer
 ```bash
-python vmkmer.py -f <reference.fasta> -v <input.vcf> -k <k-mer size (5)> [-o <output_file_path>] [--outfile <base output file name>] [--outfmt <output file format (TSV or XML)>]
+python vmkmer.py -f <fasta_file> -v <vcf_file> -k <k-mer size (5)> [-o <output_file_path>] [--outfile <base output file name>] [--outfmt <output file format (TSV or XML)>]
 
 Main arguments
-  -f F        Input fasta file (*.fasta)
+  -f F        Input fasta file (*.fasta or *.fa)
   -v V        Input vcf file (*.vcf)
   -k K        Length of k-mer (e.g. 5)
 
@@ -54,6 +43,13 @@ Optional arguments:
   --version   show program's version number and exit
 
 ```
+
+
+### VMK-mer WORKFLOW 
+<p align="center">
+  <img src="https://github.com/ubakry/VMK-mer/blob/master/vmkmer-workflow.jpg"  width="90%" height="90%">
+</p>
+
 
 ### VMK-mer TEST CASES
 This tool was tested on the files of Chromosome 21, Chromosome 22 and Chromosome Y.
