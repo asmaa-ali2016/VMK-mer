@@ -168,10 +168,17 @@ def progress(iterations, total):
     fill_len = int(round(bar_len * iterations / float(total)))
     percent = round(iterations / float(total) * 100.0, 1)
     bar = "#" * fill_len + "-" * (bar_len - fill_len)
-    time.sleep(0.1)
+    # time.sleep(0.1)
     sys.stdout.write("%s [%s] %s%s   %s\r" %
                      ("Extracting K-mers", bar, percent, "%", "Complete"))
     sys.stdout.flush()
+
+
+def recordcount(v, vcf):
+    f = open(args["v"], 'r')
+    header = str(vcf.header).splitlines()
+    total = sum(1 for line in f)-len(header)+1
+    return total
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
@@ -219,6 +226,8 @@ def main():
 
 	print('[	PROCESS    ] Extracting mutant kmers, please wait...')
 
+	total = recordcount("v", vcf)
+	iterations = 0
 	for record in vcf:
         
 		# Handling the mutation type included in the info tag of some VCF file as "TSA".
@@ -253,7 +262,8 @@ def main():
 				elif len(record.alts[0]) < len(record.ref):
 					deletion(record, genome, k)
 					#pass
-
+        iterations += 1
+        progress (iterations, total)
 	print('[	  OK       ] All kmers have been extracted successfully.')
 #------------------------------------------------------------------------------
 
