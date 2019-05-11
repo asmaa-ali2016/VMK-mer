@@ -205,19 +205,19 @@ def main():
 
 	# Handling different output formats.
 	if args['outfmt'].upper() == 'TSV':
-		with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
+		with open(args['o']+'/'+args['outfile']+'.tsv','w') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
 		head_dict={'chr': 'Chr', 'pos': 'Pos', 'id': 'Mutation-ID', 'ref':'Ref-Allele' , 'alt':'Mut-Allele', 'refk':'Ref-Kmers', 'mutk':'Mut-Kmers'}
 		write_in_tsv("Head",head_dict)
         
 	elif args['outfmt'].upper() == 'XML':
-		with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
+		with open(args['o']+'/'+args['outfile']+'.xml','w') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
 	
 	elif args['outfmt'] == 'both':
-		with open(args['o']+'/'+args['outfile']+'.tsv','a') as fd:
+		with open(args['o']+'/'+args['outfile']+'.tsv','w') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
-		with open(args['o']+'/'+args['outfile']+'.xml','a') as fd:
+		with open(args['o']+'/'+args['outfile']+'.xml','w') as fd:
 			fd.write('## VMK-mer version: v1.0\n## Output file: {}\n## Reference fasta file: {}\n## VCF file: {}\n'.format(args['o']+'/'+args['outfile'],args['f'],args['v']))
 	
 
