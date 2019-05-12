@@ -52,7 +52,7 @@ Optional arguments:
 
 
 ### VMK-mer TEST CASES
-This tool was tested on the files of Chromosome 21, Chromosome 22 and Chromosome Y.
+This tool was tested on the files of Human Chromosome 01, 21, 22 and Y.
 You can download these files using the following commands:
 
 ```bash
